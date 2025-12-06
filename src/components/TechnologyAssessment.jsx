@@ -1,24 +1,14 @@
 import React, { useState } from "react";
 import { JsonForms } from "@jsonforms/react";
 import { materialRenderers, materialCells } from "@jsonforms/material-renderers";
-import {
-  CssBaseline,
-  Container,
-  Paper,
-  Typography,
-  Button,
-  Alert,
-  Box
-} from "@mui/material";
+import {CssBaseline, Container, Paper, Typography, Button, Alert, Box} from "@mui/material";
 
 export default function TechnologyAssessment() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({});
 
-  /* ---------------------------
-     ASSESSMENT 1: exactly as you provided
-     --------------------------- */
+//  Assesment 1 
   const baseSchema = {
     type: "object",
     title: "Technology Assessment",
@@ -133,10 +123,7 @@ export default function TechnologyAssessment() {
     }
   };
 
-  /* ---------------------------
-     ASSESSMENT 2: Porter Value Chain (Option B - grouped vertical layout)
-     Each function is an object with tech1..tech4, purpose1..purpose4, gaps
-     --------------------------- */
+  // Assesssment 2
   const valueChainProps = {
     // Support Services -> Internal Operation -> HR / Finance / Management
     support_internal_HR: {
@@ -366,7 +353,6 @@ export default function TechnologyAssessment() {
     }
   };
 
-  // combine into final schema without touching your Assessment 1 fields
   const schema = {
     ...baseSchema,
     properties: {
@@ -379,11 +365,8 @@ export default function TechnologyAssessment() {
     }
   };
 
-  /* ---------------------------
-     UI Schemas
-     - Assessment 1 UI: same as you had
-     - Assessment 2 UI: grouped, explicit controls (no dropdowns)
-     --------------------------- */
+
+    
   const assessmentOneUISchema = {
     type: "VerticalLayout",
     elements: [
@@ -409,7 +392,6 @@ export default function TechnologyAssessment() {
     ]
   };
 
-  // helper to build controls for a function object (keeps UI schema tidy)
   const functionControls = (basePath) => [
     { type: "Control", scope: `${basePath}/properties/tech1` },
     { type: "Control", scope: `${basePath}/properties/purpose1` },
@@ -528,7 +510,6 @@ export default function TechnologyAssessment() {
   const handleSubmit = () => {
     setSubmitted(true);
     console.log("Technology Assessment submitted:", formData);
-    // replace console.log with your API call (axios/fetch) if needed
   };
 
   return (
@@ -540,12 +521,7 @@ export default function TechnologyAssessment() {
             Technology Assessment
           </Typography>
 
-          {submitted && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              Technology Assessment submitted successfully!
-            </Alert>
-          )}
-
+          
           {step === 1 && (
             <>
               <Typography variant="h6" gutterBottom>
@@ -572,7 +548,7 @@ export default function TechnologyAssessment() {
           {step === 2 && (
             <>
               <Typography variant="h6" gutterBottom>
-                Assessment Two — Porter's Value Chain Diagnostic
+                Assessment Two (Porter's Value Chain Diagnostic)
               </Typography>
 
               <JsonForms
