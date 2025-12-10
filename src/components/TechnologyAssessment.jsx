@@ -9,7 +9,6 @@ const ASSESSMENT_STEPS = [
   { label: "Value Chain Diagnostic", description: "Porter's Value Chain analysis" }
 ];
 
-// Helper function to create consistent controls
 const createTechControls = (path) => [
   { type: "Control", scope: `${path}/properties/tech1` },
   { type: "Control", scope: `${path}/properties/purpose1` },
@@ -26,7 +25,8 @@ const createTechControls = (path) => [
   }
 ];
 
-export default function TechnologyAssessment() {
+//  Component accepts onSubmit prop
+export default function TechnologyAssessment({ onSubmit }) {
   const [activeStep, setActiveStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({});
@@ -81,7 +81,7 @@ export default function TechnologyAssessment() {
             type: "object",
             title: "AI",
             properties: {
-              virtualAugmentedReality: { type: "boolean", title: "Virtual/Augmented Reality" }, // Fixed typo
+              virtualAugmentedReality: { type: "boolean", title: "Virtual/Augmented Reality" },
               crypto: { type: "boolean", title: "Cryptocurrency" },
               other: { type: "string", title: "Other" }
             }
@@ -114,7 +114,7 @@ export default function TechnologyAssessment() {
             type: "object",
             title: "AI",
             properties: {
-              virtualAugmentedReality: { type: "boolean", title: "Virtual/Augmented Reality" }, // Fixed typo
+              virtualAugmentedReality: { type: "boolean", title: "Virtual/Augmented Reality" },
               crypto: { type: "boolean", title: "Cryptocurrency" },
               other: { type: "string", title: "Other" }
             }
@@ -516,7 +516,7 @@ const assessmentTwoUISchema = {
   };
 
   const handleNext = () => {
-    // Basic validation for current step
+    //  validation for current step
     if (activeStep === 0) {
       if (!formData.hasProduct || !formData.productStage) {
         alert("Please fill in all required fields before proceeding.");
@@ -530,6 +530,7 @@ const assessmentTwoUISchema = {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
+  // handleSubmit  calls the onSubmit prop if provided
   const handleSubmit = async () => {
     setIsLoading(true);
     
@@ -538,6 +539,16 @@ const assessmentTwoUISchema = {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log("Technology Assessment submitted:", formData);
+      
+      //  onSubmit HANDLER
+      if (onSubmit) {
+        // Pass an object with 'schema' property 
+        onSubmit({ schema: schema });
+      } else {
+        // Fallback: if no onSubmit prop provided, log to console
+        console.log("No onSubmit prop provided. Schema would be:");
+        console.log(JSON.stringify(schema));
+      }
       
       // Clear localStorage after successful submission
       localStorage.removeItem("technologyAssessmentData");
