@@ -1,13 +1,10 @@
-import MyForm from "./components/TechnologyAssessment";
+import MyForm from "./components/assessment/TechnologyAssessment";
 
 function App() {
   return (
-  <>
-  <div className="bg-purple-600 text-white p-6  text-6xl">
-      Tailwind is working
-    </div>
-    <MyForm />;
-    </>
+  
+    <MyForm />
+    
   );
 }
 
