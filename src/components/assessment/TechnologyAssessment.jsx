@@ -4,12 +4,36 @@ import validator from "@rjsf/validator-ajv8";
 import { shadcnTheme } from "./shadcn-theme";
 
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 // ================= STEP CONFIG =================
 const ASSESSMENT_STEPS = [
   { label: "Technology Assessment", description: "Basic product information" },
   { label: "Value Chain Diagnostic", description: "Porter's Value Chain analysis" },
+];
+
+// ================= VALUE CHAIN SECTIONS =================
+const VALUE_CHAIN_SECTIONS = [
+  // Support Services
+  { group: "Support Services", area: "Internal Operation", function: "HR" },
+  { group: "Support Services", area: "Internal Operation", function: "Finance" },
+  { group: "Support Services", area: "Internal Operation", function: "Management" },
+  
+  // Primary Services - Marketing and Sales
+  { group: "Primary Services", area: "Marketing and Sales", function: "Product Development" },
+  { group: "Primary Services", area: "Marketing and Sales", function: "Marketing" },
+  { group: "Primary Services", area: "Marketing and Sales", function: "Sales" },
+  
+  // Primary Services - Operations
+  { group: "Primary Services", area: "Operations", function: "Inbound Logistics" },
+  { group: "Primary Services", area: "Operations", function: "Procurement" },
+  { group: "Primary Services", area: "Operations", function: "Production" },
+  { group: "Primary Services", area: "Operations", function: "Warehousing" },
+  { group: "Primary Services", area: "Operations", function: "Outbound Logistics" },
+  { group: "Primary Services", area: "Operations", function: "Order Processing" },
+  { group: "Primary Services", area: "Operations", function: "Distribution" },
+  { group: "Primary Services", area: "Operations", function: "Customer Service" },
 ];
 
 // ================= STEP 1 SCHEMA =================
@@ -22,18 +46,15 @@ const step1Schema = {
       title: "1. Do you have a product?",
       enum: ["Yes", "No"],
     },
-
     productStage: {
       type: "string",
       title: "2. At what stage is your product?",
       enum: ["Prototype", "MVP", "Full Product", "In Development"],
     },
-
     techChallenges: {
       type: "string",
       title: "3. What technology challenges do you currently have?",
     },
-
     currentTechnologies: {
       type: "object",
       title: "4. Does your product currently use any of these technologies?",
@@ -47,7 +68,6 @@ const step1Schema = {
           },
           uniqueItems: true,
         },
-
         webApp: {
           type: "array",
           title: "Web App",
@@ -57,23 +77,17 @@ const step1Schema = {
           },
           uniqueItems: true,
         },
-
         ai: {
           type: "array",
           title: "AI",
           items: {
             type: "string",
-            enum: [
-              "Virtual/Augmented Reality",
-              "Cryptocurrency",
-              "Other",
-            ],
+            enum: ["Virtual/Augmented Reality", "Cryptocurrency", "Other"],
           },
           uniqueItems: true,
         },
       },
     },
-
     futureTechnologies: {
       type: "object",
       title: "5. Do you plan to incorporate any of these technologies?",
@@ -87,7 +101,6 @@ const step1Schema = {
           },
           uniqueItems: true,
         },
-
         webApp: {
           type: "array",
           title: "Web App",
@@ -97,34 +110,26 @@ const step1Schema = {
           },
           uniqueItems: true,
         },
-
         ai: {
           type: "array",
           title: "AI",
           items: {
             type: "string",
-            enum: [
-              "Virtual/Augmented Reality",
-              "Cryptocurrency",
-              "Other",
-            ],
+            enum: ["Virtual/Augmented Reality", "Cryptocurrency", "Other"],
           },
           uniqueItems: true,
         },
       },
     },
-
     roadmapFeatures: {
       type: "string",
       title: "6. What features do you have in your roadmap?",
     },
-
     hasCapabilities: {
       type: "string",
       title: "7. Do you have in-house capability?",
       enum: ["Yes", "No"],
     },
-
     resourcesNeeded: {
       type: "string",
       title: "8. What resources or capabilities do you need?",
@@ -134,106 +139,91 @@ const step1Schema = {
 
 // ================= STEP 1 UI SCHEMA =================
 const step1UiSchema = {
-  hasProduct: {
-    "ui:widget": "select",
-    "ui:options": {
-      placeholder: "Select an option"
-    }
-  },
-
-  productStage: {
-    "ui:widget": "select",
-  },
-
-  // FIX #1: Textarea that grows and allows Enter key for new lines
-  techChallenges: {
-    "ui:widget": "textarea",
-    "ui:options": {
-      rows: 4,
-      placeholder: "Enter your technology challenges (press Enter to add new lines)"
-    }
-  },
-
-  // FIX #2: Checkboxes with proper spacing
+  hasProduct: { "ui:widget": "select", "ui:options": { placeholder: "Select an option" } },
+  productStage: { "ui:widget": "select" },
+  techChallenges: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
   currentTechnologies: {
-    "ui:options": {
-      classNames: "border-0 p-0 m-0",
-      label: false
-    },
-    mobileApp: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-      }
-    },
-    webApp: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-      }
-    },
-    ai: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6"
-      }
-    },
+    "ui:options": { classNames: "border-0 p-0 m-0", label: false },
+    mobileApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
+    webApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
+    ai: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4" } },
   },
-
   futureTechnologies: {
-    "ui:options": {
-      classNames: "border-0 p-0 m-0",
-      label: false
-    },
-    mobileApp: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-      }
-    },
-    webApp: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-      }
-    },
-    ai: {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        inline: true,
-        classNames: "grid grid-cols-1 md:grid-cols-3 gap-6"
-      }
+    "ui:options": { classNames: "border-0 p-0 m-0", label: false },
+    mobileApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
+    webApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
+    ai: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4" } },
+  },
+  roadmapFeatures: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
+  hasCapabilities: { "ui:widget": "select", "ui:options": { placeholder: "Select an option" } },
+  resourcesNeeded: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
+};
+
+// ================= STEP 2 SCHEMA =================
+const step2Schema = {
+  type: "object",
+  title: "Value Chain Technology Diagnostic",
+  description: "The diagnostic is built around Porter's value chain framework. It helps SMEs to list technology that is used for each corporate function and identify if effective or not.",
+  properties: {
+    valueChainData: {
+      type: "object",
+      properties: VALUE_CHAIN_SECTIONS.reduce((acc, section) => {
+        acc[section.function.replace(/\s+/g, '')] = {
+          type: "object",
+          title: section.function,
+          properties: {
+            tech1: { type: "string", title: "Technology 1" },
+            purpose1: { type: "string", title: "Purpose 1" },
+            tech2: { type: "string", title: "Technology 2" },
+            purpose2: { type: "string", title: "Purpose 2" },
+            tech3: { type: "string", title: "Technology 3" },
+            purpose3: { type: "string", title: "Purpose 3" },
+            tech4: { type: "string", title: "Technology 4" },
+            purpose4: { type: "string", title: "Purpose 4" },
+            gaps: { type: "string", title: "Gaps Identified", description: "Highlight tech needed for scale" },
+          },
+        };
+        return acc;
+      }, {}),
     },
   },
+};
 
-  // FIX #3: Textarea for roadmap (grows with Enter key)
-  roadmapFeatures: {
-    "ui:widget": "textarea",
+// ================= STEP 2 UI SCHEMA (NO EXCESSIVE BORDERS) =================
+const step2UiSchema = {
+  valueChainData: {
     "ui:options": {
-      rows: 4,
-      placeholder: "Enter your roadmap features (press Enter to add new lines)"
-    }
-  },
-
-  hasCapabilities: {
-    "ui:widget": "select",
-    "ui:options": {
-      placeholder: "Select an option"
-    }
-  },
-
-  // FIX #4: Textarea for resources needed (grows with Enter key)
-  resourcesNeeded: {
-    "ui:widget": "textarea",
-    "ui:options": {
-      rows: 4,
-      placeholder: "Enter resources or capabilities needed (press Enter to add new lines)"
-    }
+      classNames: "space-y-4",
+    },
+    ...Object.fromEntries(
+      VALUE_CHAIN_SECTIONS.map(section => {
+        const key = section.function.replace(/\s+/g, '');
+        return [
+          key,
+          {
+            // REMOVED: border, rounded-lg, shadow-sm - now just a simple bottom border
+            "ui:options": {
+              classNames: "pb-4 mb-4 border-b border-gray-200 last:border-b-0",
+            },
+            tech1: { "ui:options": { classNames: "w-full mb-2" } },
+            purpose1: { "ui:options": { classNames: "w-full mb-3" } },
+            tech2: { "ui:options": { classNames: "w-full mb-2" } },
+            purpose2: { "ui:options": { classNames: "w-full mb-3" } },
+            tech3: { "ui:options": { classNames: "w-full mb-2" } },
+            purpose3: { "ui:options": { classNames: "w-full mb-3" } },
+            tech4: { "ui:options": { classNames: "w-full mb-2" } },
+            purpose4: { "ui:options": { classNames: "w-full mb-3" } },
+            gaps: {
+              "ui:widget": "textarea",
+              "ui:options": {
+                rows: 2,
+                classNames: "w-full border border-blue-200 bg-blue-50 rounded-md p-2",
+              },
+            },
+          },
+        ];
+      })
+    ),
   },
 };
 
@@ -249,16 +239,22 @@ export default function TechnologyAssessment({ onSubmit }) {
     localStorage.setItem("technologyAssessmentData", JSON.stringify(formData));
   };
 
-  const handleNext = () => setActiveStep((p) => p + 1);
+  const handleNext = () => {
+    if (activeStep === 0) {
+      if (!formData.hasProduct || !formData.productStage) {
+        alert("Please complete all required fields before proceeding.");
+        return;
+      }
+    }
+    setActiveStep((p) => p + 1);
+  };
+  
   const handleBack = () => setActiveStep((p) => p - 1);
 
   const handleSubmit = async () => {
     setIsLoading(true);
-
     await new Promise((r) => setTimeout(r, 1000));
-
     onSubmit?.(formData);
-
     localStorage.removeItem("technologyAssessmentData");
     setSubmitted(true);
     setIsLoading(false);
@@ -273,13 +269,8 @@ export default function TechnologyAssessment({ onSubmit }) {
     return (
       <div className="max-w-xl mx-auto text-center py-10">
         <CheckCircle2 className="mx-auto text-green-600 w-12 h-12" />
-        <h2 className="text-2xl font-bold mt-4">
-          Assessment Submitted Successfully
-        </h2>
-
-        <Button className="mt-6" onClick={() => setSubmitted(false)}>
-          Start New Assessment
-        </Button>
+        <h2 className="text-2xl font-bold mt-4">Assessment Submitted Successfully</h2>
+        <Button className="mt-6" onClick={() => setSubmitted(false)}>Start New Assessment</Button>
       </div>
     );
   }
@@ -292,31 +283,55 @@ export default function TechnologyAssessment({ onSubmit }) {
           <p className="text-gray-600 mt-1">{ASSESSMENT_STEPS[activeStep].description}</p>
         </div>
 
-        <div className="py-4">
-          <Form
-            schema={step1Schema}
-            uiSchema={step1UiSchema}
-            formData={formData}
-            onChange={handleFormChange}
-            validator={validator}
-            {...shadcnTheme}
-          >
-            <div />
-          </Form>
-
-          <div className="flex justify-between mt-8 pt-4 border-t">
-            <Button onClick={handleBack} disabled={activeStep === 0}>
-              Previous
-            </Button>
-
-            <Button onClick={handleSubmit} disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="animate-spin w-4 h-4" />
-              ) : (
-                "Submit"
-              )}
-            </Button>
+        {activeStep === 0 ? (
+          <div className="py-4">
+            <Form
+              schema={step1Schema}
+              uiSchema={step1UiSchema}
+              formData={formData}
+              onChange={handleFormChange}
+              validator={validator}
+              {...shadcnTheme}
+            >
+              <div />
+            </Form>
           </div>
+        ) : (
+          <div className="py-4">
+            {/* Header Instructions */}
+            <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">How to Use This Diagnostic</h3>
+              <ul className="list-disc list-inside space-y-1 text-sm text-blue-700">
+                <li>1. For each area, list the technology you use and its purpose</li>
+                <li>2. Identify areas where you believe you should be using technology but you're not</li>
+                <li>3. Review each technology in use and determine if it will support your scale operations</li>
+                <li>4. Where you don't use any technology but believe it is an important need for scale, indicate this in the key gaps column</li>
+                <li>5. Do the same for situations where you have technology but believe it is not adequate to support your scale plan</li>
+              </ul>
+            </div>
+
+            <Form
+              schema={step2Schema}
+              uiSchema={step2UiSchema}
+              formData={formData}
+              onChange={handleFormChange}
+              validator={validator}
+              {...shadcnTheme}
+            >
+              <div />
+            </Form>
+          </div>
+        )}
+
+        <div className="flex justify-between mt-8 pt-4 border-t">
+          <Button onClick={handleBack} disabled={activeStep === 0}>Previous</Button>
+          {activeStep === 0 ? (
+            <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700">Next</Button>
+          ) : (
+            <Button onClick={handleSubmit} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
+              {isLoading ? <Loader2 className="animate-spin w-4 h-4" /> : "Submit Assessment"}
+            </Button>
+          )}
         </div>
       </div>
     </div>
