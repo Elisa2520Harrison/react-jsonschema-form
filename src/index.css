@@ -1,6 +1,6 @@
 @import "tailwindcss"; 
 @import "tw-animate-css"; 
- 
+@source "../node_modules/@rjsf/shadcn/src";
  
 @layer base { 
   :root { 

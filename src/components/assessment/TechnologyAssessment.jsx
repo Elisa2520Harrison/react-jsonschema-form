@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Form from "@rjsf/core";
+import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
-import { shadcnTheme } from "./shadcn-theme";
 
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 // ================= STEP CONFIG =================
@@ -15,17 +13,12 @@ const ASSESSMENT_STEPS = [
 
 // ================= VALUE CHAIN SECTIONS =================
 const VALUE_CHAIN_SECTIONS = [
-  // Support Services
   { group: "Support Services", area: "Internal Operation", function: "HR" },
   { group: "Support Services", area: "Internal Operation", function: "Finance" },
   { group: "Support Services", area: "Internal Operation", function: "Management" },
-  
-  // Primary Services - Marketing and Sales
   { group: "Primary Services", area: "Marketing and Sales", function: "Product Development" },
   { group: "Primary Services", area: "Marketing and Sales", function: "Marketing" },
   { group: "Primary Services", area: "Marketing and Sales", function: "Sales" },
-  
-  // Primary Services - Operations
   { group: "Primary Services", area: "Operations", function: "Inbound Logistics" },
   { group: "Primary Services", area: "Operations", function: "Procurement" },
   { group: "Primary Services", area: "Operations", function: "Production" },
@@ -139,24 +132,61 @@ const step1Schema = {
 
 // ================= STEP 1 UI SCHEMA =================
 const step1UiSchema = {
-  hasProduct: { "ui:widget": "select", "ui:options": { placeholder: "Select an option" } },
-  productStage: { "ui:widget": "select" },
-  techChallenges: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
+  hasProduct: { 
+    "ui:widget": "radio", 
+    "ui:options": { 
+      inline: true 
+    } 
+  },
+  productStage: { 
+    "ui:widget": "select" 
+  },
+  techChallenges: { 
+    "ui:widget": "textarea", 
+    "ui:options": { rows: 4 } 
+  },
   currentTechnologies: {
-    "ui:options": { classNames: "border-0 p-0 m-0", label: false },
-    mobileApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
-    webApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
-    ai: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4" } },
+    mobileApp: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
+    webApp: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
+    ai: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
   },
   futureTechnologies: {
-    "ui:options": { classNames: "border-0 p-0 m-0", label: false },
-    mobileApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
-    webApp: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4 mb-6" } },
-    ai: { "ui:widget": "checkboxes", "ui:options": { inline: true, classNames: "grid grid-cols-3 gap-4" } },
+    mobileApp: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
+    webApp: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
+    ai: { 
+      "ui:widget": "checkboxes", 
+      "ui:options": { inline: true } 
+    },
   },
-  roadmapFeatures: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
-  hasCapabilities: { "ui:widget": "select", "ui:options": { placeholder: "Select an option" } },
-  resourcesNeeded: { "ui:widget": "textarea", "ui:options": { rows: 4 } },
+  roadmapFeatures: { 
+    "ui:widget": "textarea", 
+    "ui:options": { rows: 4 } 
+  },
+  hasCapabilities: { 
+    "ui:widget": "radio", 
+    "ui:options": { 
+      inline: true 
+    } 
+  },
+  resourcesNeeded: { 
+    "ui:widget": "textarea", 
+    "ui:options": { rows: 4 } 
+  },
 };
 
 // ================= STEP 2 SCHEMA =================
@@ -168,7 +198,8 @@ const step2Schema = {
     valueChainData: {
       type: "object",
       properties: VALUE_CHAIN_SECTIONS.reduce((acc, section) => {
-        acc[section.function.replace(/\s+/g, '')] = {
+        const key = section.function.replace(/\s+/g, '');
+        acc[key] = {
           type: "object",
           title: section.function,
           properties: {
@@ -189,22 +220,15 @@ const step2Schema = {
   },
 };
 
-// ================= STEP 2 UI SCHEMA (NO EXCESSIVE BORDERS) =================
+// ================= STEP 2 UI SCHEMA =================
 const step2UiSchema = {
   valueChainData: {
-    "ui:options": {
-      classNames: "space-y-4",
-    },
     ...Object.fromEntries(
       VALUE_CHAIN_SECTIONS.map(section => {
         const key = section.function.replace(/\s+/g, '');
         return [
           key,
           {
-            // REMOVED: border, rounded-lg, shadow-sm - now just a simple bottom border
-            "ui:options": {
-              classNames: "pb-4 mb-4 border-b border-gray-200 last:border-b-0",
-            },
             tech1: { "ui:options": { classNames: "w-full mb-2" } },
             purpose1: { "ui:options": { classNames: "w-full mb-3" } },
             tech2: { "ui:options": { classNames: "w-full mb-2" } },
@@ -215,10 +239,7 @@ const step2UiSchema = {
             purpose4: { "ui:options": { classNames: "w-full mb-3" } },
             gaps: {
               "ui:widget": "textarea",
-              "ui:options": {
-                rows: 2,
-                classNames: "w-full border border-blue-200 bg-blue-50 rounded-md p-2",
-              },
+              "ui:options": { rows: 2 },
             },
           },
         ];
@@ -227,22 +248,31 @@ const step2UiSchema = {
   },
 };
 
-// ================= COMPONENT =================
+// ================= MAIN COMPONENT =================
 export default function TechnologyAssessment({ onSubmit }) {
   const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({});  // Start with empty object, NOT array
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormChange = ({ formData }) => {
-    setFormData(formData);
-    localStorage.setItem("technologyAssessmentData", JSON.stringify(formData));
+    console.log("Form data updated:", formData);
+    // Make sure formData is an object
+    if (formData && typeof formData === 'object') {
+      setFormData(formData);
+      localStorage.setItem("technologyAssessmentData", JSON.stringify(formData));
+    }
   };
 
   const handleNext = () => {
     if (activeStep === 0) {
-      if (!formData.hasProduct || !formData.productStage) {
-        alert("Please complete all required fields before proceeding.");
+      console.log("Current formData on Next:", formData);
+      if (!formData.hasProduct) {
+        alert("Please select whether you have a product (Yes/No)");
+        return;
+      }
+      if (!formData.productStage) {
+        alert("Please select your product stage");
         return;
       }
     }
@@ -254,6 +284,7 @@ export default function TechnologyAssessment({ onSubmit }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 1000));
+    console.log("Final form data:", formData);
     onSubmit?.(formData);
     localStorage.removeItem("technologyAssessmentData");
     setSubmitted(true);
@@ -262,7 +293,17 @@ export default function TechnologyAssessment({ onSubmit }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("technologyAssessmentData");
-    if (saved) setFormData(JSON.parse(saved));
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Ensure saved data is an object
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          setFormData(parsed);
+        }
+      } catch (e) {
+        console.error("Error loading saved data:", e);
+      }
+    }
   }, []);
 
   if (submitted) {
@@ -270,14 +311,21 @@ export default function TechnologyAssessment({ onSubmit }) {
       <div className="max-w-xl mx-auto text-center py-10">
         <CheckCircle2 className="mx-auto text-green-600 w-12 h-12" />
         <h2 className="text-2xl font-bold mt-4">Assessment Submitted Successfully</h2>
-        <Button className="mt-6" onClick={() => setSubmitted(false)}>Start New Assessment</Button>
+        <p className="text-gray-600 mt-2">Thank you for completing the technology assessment.</p>
+        <Button className="mt-6" onClick={() => {
+          setSubmitted(false);
+          setFormData({});  // Reset to empty object
+          setActiveStep(0);
+        }}>
+          Start New Assessment
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="bg-white rounded-lg">
+    <div className="p-6 max-w-4xl mx-auto">
+      <div className="bg-white rounded-lg shadow-sm">
         <div className="border-b pb-4 mb-6">
           <h2 className="text-2xl font-bold">{ASSESSMENT_STEPS[activeStep].label}</h2>
           <p className="text-gray-600 mt-1">{ASSESSMENT_STEPS[activeStep].description}</p>
@@ -291,14 +339,10 @@ export default function TechnologyAssessment({ onSubmit }) {
               formData={formData}
               onChange={handleFormChange}
               validator={validator}
-              {...shadcnTheme}
-            >
-              <div />
-            </Form>
+            />
           </div>
         ) : (
           <div className="py-4">
-            {/* Header Instructions */}
             <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <h3 className="text-lg font-semibold text-blue-800 mb-2">How to Use This Diagnostic</h3>
               <ul className="list-disc list-inside space-y-1 text-sm text-blue-700">
@@ -316,20 +360,29 @@ export default function TechnologyAssessment({ onSubmit }) {
               formData={formData}
               onChange={handleFormChange}
               validator={validator}
-              {...shadcnTheme}
-            >
-              <div />
-            </Form>
+            />
           </div>
         )}
 
         <div className="flex justify-between mt-8 pt-4 border-t">
-          <Button onClick={handleBack} disabled={activeStep === 0}>Previous</Button>
+          <Button 
+            onClick={handleBack} 
+            disabled={activeStep === 0}
+            variant="outline"
+          >
+            Previous
+          </Button>
           {activeStep === 0 ? (
-            <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700">Next</Button>
+            <Button 
+              onClick={handleNext}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Next
+            </Button>
           ) : (
             <Button onClick={handleSubmit} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
-              {isLoading ? <Loader2 className="animate-spin w-4 h-4" /> : "Submit Assessment"}
+              {isLoading ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : null}
+              {isLoading ? "Submitting..." : "Submit Assessment"}
             </Button>
           )}
         </div>
