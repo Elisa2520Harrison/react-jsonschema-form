@@ -463,6 +463,7 @@ export default function TechnologyAssessment({ onSubmit }) {
       }
     }
   }, []);
+  
 
   if (submitted) {
     return (

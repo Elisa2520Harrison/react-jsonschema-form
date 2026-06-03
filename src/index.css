@@ -53,3 +53,33 @@
     --ring: 0 0% 83.1%; 
   } 
 }
+
+/* Force dropdown backgrounds to be white */
+select,
+.rjsf select,
+[class*="rjsf"] select,
+.form-group select,
+.field select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+select option,
+.rjsf select option {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Fix for the specific dropdown fields */
+#root_myProduct,
+#root_productStage,
+[id*="myProduct"],
+[id*="productStage"] {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
